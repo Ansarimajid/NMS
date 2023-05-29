@@ -1,0 +1,77 @@
+{% extends 'main_app/base.html' %}
+
+
+
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">{{page_title}}</h3>
+                    </div>
+                    <form method="post" style="padding-left: 35px; padding-top: 20px; padding-bottom: 20px;" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <button type="submit">Upload</button>
+                    </form>
+                   
+                </div>
+                <!-- /.card -->
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+  /* CSS for the interactive UI */
+  .card {
+    margin-top: 20px;
+  }
+
+  .card-header {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .card-title {
+    margin: 0;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button[type="submit"] {
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #23272b;
+  }
+</style>
+
+{% endblock content %}
