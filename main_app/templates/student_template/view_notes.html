@@ -35,9 +35,9 @@
                                     <td>{{ forloop.counter }}.</td>
                                     <td>{{ note.title }}</td>
                                     <td>{{ note.description }}</td>
-                                    <td>{{ note.uploaded_by }}</td> <!-- Display the uploaded by information -->
+                                    <td>{{ note.uploaded_by }}</td>
                                     <td>
-                                        <a class="note-download-link" href="{{ note.file.url }}">Download</a>
+                                        <a class="note-download-link" href="{{ note.file.url }}">Download {{ note.file.name|slice:'-3:' }}</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -75,5 +75,3 @@
 </script>
 
 {% endblock content %}
-
-
