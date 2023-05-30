@@ -391,6 +391,15 @@
                                         </li>
 
                                         <li class="nav-item">
+                                            {% url 'student_view_result' as student_view_result %}
+                                            <a href="{{student_view_result}}"
+                                                class="nav-link {% if student_view_result == request.path %} active {% endif %}">
+                                                <i class="nav-icon fas fa-calendar-alt"></i>
+                                                <p>View Result</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             {% url 'view_notes' as view_notes %}
                                             <a href="{{view_notes}}"
                                                 class="nav-link {% if view_notes == request.path %} active {% endif %}">
