@@ -62,9 +62,7 @@ def admin_home(request):
         
         attendance = AttendanceReport.objects.filter(student_id=student.id, status=True).count()
         absent = AttendanceReport.objects.filter(student_id=student.id, status=False).count()
-        leave = LeaveReportStudent.objects.filter(student_id=student.id, status=1).count()
         student_attendance_present_list.append(attendance)
-        student_attendance_leave_list.append(leave+absent)
         student_name_list.append(student.admin.first_name)
 
     context = {
@@ -447,98 +445,6 @@ def check_email_availability(request):
         return HttpResponse(False)
 
 
-@csrf_exempt
-def student_feedback_message(request):
-    if request.method != 'POST':
-        feedbacks = FeedbackStudent.objects.all()
-        context = {
-            'feedbacks': feedbacks,
-            'page_title': 'Student Feedback Messages'
-        }
-        return render(request, 'hod_template/student_feedback_template.html', context)
-    else:
-        feedback_id = request.POST.get('id')
-        try:
-            feedback = get_object_or_404(FeedbackStudent, id=feedback_id)
-            reply = request.POST.get('reply')
-            feedback.reply = reply
-            feedback.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return HttpResponse(False)
-
-
-@csrf_exempt
-def staff_feedback_message(request):
-    if request.method != 'POST':
-        feedbacks = FeedbackStaff.objects.all()
-        context = {
-            'feedbacks': feedbacks,
-            'page_title': 'Staff Feedback Messages'
-        }
-        return render(request, 'hod_template/staff_feedback_template.html', context)
-    else:
-        feedback_id = request.POST.get('id')
-        try:
-            feedback = get_object_or_404(FeedbackStaff, id=feedback_id)
-            reply = request.POST.get('reply')
-            feedback.reply = reply
-            feedback.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return HttpResponse(False)
-
-
-@csrf_exempt
-def view_staff_leave(request):
-    if request.method != 'POST':
-        allLeave = LeaveReportStaff.objects.all()
-        context = {
-            'allLeave': allLeave,
-            'page_title': 'Leave Applications From Staff'
-        }
-        return render(request, "hod_template/staff_leave_view.html", context)
-    else:
-        id = request.POST.get('id')
-        status = request.POST.get('status')
-        if (status == '1'):
-            status = 1
-        else:
-            status = -1
-        try:
-            leave = get_object_or_404(LeaveReportStaff, id=id)
-            leave.status = status
-            leave.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return False
-
-
-@csrf_exempt
-def view_student_leave(request):
-    if request.method != 'POST':
-        allLeave = LeaveReportStudent.objects.all()
-        context = {
-            'allLeave': allLeave,
-            'page_title': 'Leave Applications From Students'
-        }
-        return render(request, "hod_template/student_leave_view.html", context)
-    else:
-        id = request.POST.get('id')
-        status = request.POST.get('status')
-        if (status == '1'):
-            status = 1
-        else:
-            status = -1
-        try:
-            leave = get_object_or_404(LeaveReportStudent, id=id)
-            leave.status = status
-            leave.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return False
-
-
 def admin_view_attendance(request):
     subjects = Subject.objects.all()
     sessions = Session.objects.all()
@@ -648,8 +554,6 @@ def send_student_notification(request):
                    'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
                    'Content-Type': 'application/json'}
         data = requests.post(url, data=json.dumps(body), headers=headers)
-        notification = NotificationStudent(student=student, message=message)
-        notification.save()
         return HttpResponse("True")
     except Exception as e:
         return HttpResponse("False")
@@ -675,8 +579,6 @@ def send_staff_notification(request):
                    'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
                    'Content-Type': 'application/json'}
         data = requests.post(url, data=json.dumps(body), headers=headers)
-        notification = NotificationStaff(staff=staff, message=message)
-        notification.save()
         return HttpResponse("True")
     except Exception as e:
         return HttpResponse("False")

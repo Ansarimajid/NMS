@@ -15,7 +15,6 @@ from datetime import date
 def staff_home(request):
     staff = get_object_or_404(Staff, admin=request.user)
     total_students = Student.objects.filter(course=staff.course).count()
-    total_leave = LeaveReportStaff.objects.filter(staff=staff).count()
     subjects = Subject.objects.filter(staff=staff)
     total_subject = subjects.count()
     attendance_list = Attendance.objects.filter(subject__in=subjects)
@@ -30,7 +29,6 @@ def staff_home(request):
         'page_title': 'Staff Panel - ' + str(staff.admin.first_name) + ' ' + str(staff.admin.last_name[0]) + '' + ' (' + str(staff.course) + ')',
         'total_students': total_students,
         'total_attendance': total_attendance,
-        'total_leave': total_leave,
         'total_subject': total_subject,
         'subject_list': subject_list,
         'attendance_list': attendance_list
@@ -154,52 +152,6 @@ def upload_note(request):
         form = NoteForm()
     return render(request, 'staff_template/upload_note.html', { 'page_title': 'Upload Notes','form': form})
 
-def staff_apply_leave(request):
-    form = LeaveReportStaffForm(request.POST or None)
-    staff = get_object_or_404(Staff, admin_id=request.user.id)
-    context = {
-        'form': form,
-        'leave_history': LeaveReportStaff.objects.filter(staff=staff),
-        'page_title': 'Apply for Leave'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                obj = form.save(commit=False)
-                obj.staff = staff
-                obj.save()
-                messages.success(
-                    request, "Application for leave has been submitted for review")
-                return redirect(reverse('staff_apply_leave'))
-            except Exception:
-                messages.error(request, "Could not apply!")
-        else:
-            messages.error(request, "Form has errors!")
-    return render(request, "staff_template/staff_apply_leave.html", context)
-
-
-def staff_feedback(request):
-    form = FeedbackStaffForm(request.POST or None)
-    staff = get_object_or_404(Staff, admin_id=request.user.id)
-    context = {
-        'form': form,
-        'feedbacks': FeedbackStaff.objects.filter(staff=staff),
-        'page_title': 'Add Feedback'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                obj = form.save(commit=False)
-                obj.staff = staff
-                obj.save()
-                messages.success(request, "Feedback submitted for review")
-                return redirect(reverse('staff_feedback'))
-            except Exception:
-                messages.error(request, "Could not Submit!")
-        else:
-            messages.error(request, "Form has errors!")
-    return render(request, "staff_template/staff_feedback.html", context)
-
 
 def staff_view_profile(request):
     staff = get_object_or_404(Staff, admin=request.user)
@@ -253,16 +205,6 @@ def staff_fcmtoken(request):
         return HttpResponse("False")
 
 
-def staff_view_notification(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    notifications = NotificationStaff.objects.filter(staff=staff)
-    context = {
-        'notifications': notifications,
-        'page_title': "View Notifications"
-    }
-    return render(request, "staff_template/staff_view_notification.html", context)
-
-
 def staff_add_result(request):
     staff = get_object_or_404(Staff, admin=request.user)
     subjects = Subject.objects.filter(staff=staff)
@@ -312,55 +254,4 @@ def fetch_student_result(request):
     except Exception as e:
         return HttpResponse('False')
 
-#library
-def add_book(request):
-    if request.method == "POST":
-        name = request.POST['name']
-        author = request.POST['author']
-        isbn = request.POST['isbn']
-        category = request.POST['category']
 
-
-        books = Book.objects.create(name=name, author=author, isbn=isbn, category=category )
-        books.save()
-        alert = True
-        return render(request, "staff_template/add_book.html", {'alert':alert})
-    context = {
-        'page_title': "Add Book"
-    }
-    return render(request, "staff_template/add_book.html",context)
-
-#issue book
-
-
-def issue_book(request):
-    form = forms.IssueBookForm()
-    if request.method == "POST":
-        form = forms.IssueBookForm(request.POST)
-        if form.is_valid():
-            obj = models.IssuedBook()
-            obj.student_id = request.POST['name2']
-            obj.isbn = request.POST['isbn2']
-            obj.save()
-            alert = True
-            return render(request, "staff_template/issue_book.html", {'obj':obj, 'alert':alert})
-    return render(request, "staff_template/issue_book.html", {'form':form})
-
-def view_issued_book(request):
-    issuedBooks = IssuedBook.objects.all()
-    details = []
-    for i in issuedBooks:
-        days = (date.today()-i.issued_date)
-        d=days.days
-        fine=0
-        if d>14:
-            day=d-14
-            fine=day*5
-        books = list(models.Book.objects.filter(isbn=i.isbn))
-        # students = list(models.Student.objects.filter(admin=i.admin))
-        i=0
-        for l in books:
-            t=(books[i].name,books[i].isbn,issuedBooks[0].issued_date,issuedBooks[0].expiry_date,fine)
-            i=i+1
-            details.append(t)
-    return render(request, "staff_template/view_issued_book.html", {'issuedBooks':issuedBooks, 'details':details})
