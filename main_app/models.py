@@ -31,13 +31,6 @@ class CustomUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class Session(models.Model):
-    start_year = models.DateField()
-    end_year = models.DateField()
-
-    def __str__(self):
-        return "From " + str(self.start_year) + " to " + str(self.end_year)
-
 
 class CustomUser(AbstractUser):
     USER_TYPE = ((1, "HOD"), (2, "Staff"), (3, "Student"))
@@ -80,7 +73,6 @@ class Course(models.Model):
 class Student(models.Model):
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING, null=True, blank=False)
-    session = models.ForeignKey(Session, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         return self.admin.last_name + ", " + self.admin.first_name
@@ -107,7 +99,6 @@ class Subject(models.Model):
 
 
 class Attendance(models.Model):
-    session = models.ForeignKey(Session, on_delete=models.DO_NOTHING)
     subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
     date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)

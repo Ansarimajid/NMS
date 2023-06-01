@@ -39,10 +39,8 @@ def staff_home(request):
 def staff_take_attendance(request):
     staff = get_object_or_404(Staff, admin=request.user)
     subjects = Subject.objects.filter(staff_id=staff)
-    sessions = Session.objects.all()
     context = {
         'subjects': subjects,
-        'sessions': sessions,
         'page_title': 'Take Attendance'
     }
 
@@ -52,12 +50,10 @@ def staff_take_attendance(request):
 @csrf_exempt
 def get_students(request):
     subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
     try:
         subject = get_object_or_404(Subject, id=subject_id)
-        session = get_object_or_404(Session, id=session_id)
         students = Student.objects.filter(
-            course_id=subject.course.id, session=session)
+            course_id=subject.course.id)
         student_data = []
         for student in students:
             data = {
@@ -75,12 +71,10 @@ def save_attendance(request):
     student_data = request.POST.get('student_ids')
     date = request.POST.get('date')
     subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
     students = json.loads(student_data)
     try:
-        session = get_object_or_404(Session, id=session_id)
         subject = get_object_or_404(Subject, id=subject_id)
-        attendance = Attendance(session=session, subject=subject, date=date)
+        attendance = Attendance( subject=subject, date=date)
         attendance.save()
 
         for student_dict in students:
@@ -96,10 +90,8 @@ def save_attendance(request):
 def staff_update_attendance(request):
     staff = get_object_or_404(Staff, admin=request.user)
     subjects = Subject.objects.filter(staff_id=staff)
-    sessions = Session.objects.all()
     context = {
         'subjects': subjects,
-        'sessions': sessions,
         'page_title': 'Update Attendance'
     }
 
@@ -208,11 +200,9 @@ def staff_fcmtoken(request):
 def staff_add_result(request):
     staff = get_object_or_404(Staff, admin=request.user)
     subjects = Subject.objects.filter(staff=staff)
-    sessions = Session.objects.all()
     context = {
         'page_title': 'Result Upload',
         'subjects': subjects,
-        'sessions': sessions
     }
     if request.method == 'POST':
         try:

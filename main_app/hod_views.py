@@ -54,7 +54,6 @@ def admin_home(request):
 
     # For Students
     student_attendance_present_list=[]
-    student_attendance_leave_list=[]
     student_name_list=[]
 
     students = Student.objects.all()
@@ -74,7 +73,6 @@ def admin_home(request):
         'subject_list': subject_list,
         'attendance_list': attendance_list,
         'student_attendance_present_list': student_attendance_present_list,
-        'student_attendance_leave_list': student_attendance_leave_list,
         "student_name_list": student_name_list,
         "student_count_list_in_subject": student_count_list_in_subject,
         "student_count_list_in_course": student_count_list_in_course,
@@ -130,7 +128,6 @@ def add_student(request):
             gender = student_form.cleaned_data.get('gender')
             password = student_form.cleaned_data.get('password')
             course = student_form.cleaned_data.get('course')
-            session = student_form.cleaned_data.get('session')
             passport = request.FILES['profile_pic']
             fs = FileSystemStorage()
             filename = fs.save(passport.name, passport)
@@ -140,7 +137,6 @@ def add_student(request):
                     email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic=passport_url)
                 user.gender = gender
                 user.address = address
-                user.student.session = session
                 user.student.course = course
                 user.save()
                 messages.success(request, "Successfully Added")
@@ -305,7 +301,6 @@ def edit_student(request, student_id):
             gender = form.cleaned_data.get('gender')
             password = form.cleaned_data.get('password') or None
             course = form.cleaned_data.get('course')
-            session = form.cleaned_data.get('session')
             passport = request.FILES.get('profile_pic') or None
             try:
                 user = CustomUser.objects.get(id=student.admin.id)
@@ -320,7 +315,6 @@ def edit_student(request, student_id):
                     user.set_password(password)
                 user.first_name = first_name
                 user.last_name = last_name
-                student.session = session
                 user.gender = gender
                 user.address = address
                 student.course = course
@@ -388,51 +382,6 @@ def edit_subject(request, subject_id):
     return render(request, 'hod_template/edit_subject_template.html', context)
 
 
-def add_session(request):
-    form = SessionForm(request.POST or None)
-    context = {'form': form, 'page_title': 'Add Session'}
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Session Created")
-                return redirect(reverse('add_session'))
-            except Exception as e:
-                messages.error(request, 'Could Not Add ' + str(e))
-        else:
-            messages.error(request, 'Fill Form Properly ')
-    return render(request, "hod_template/add_session_template.html", context)
-
-
-def manage_session(request):
-    sessions = Session.objects.all()
-    context = {'sessions': sessions, 'page_title': 'Manage Sessions'}
-    return render(request, "hod_template/manage_session.html", context)
-
-
-def edit_session(request, session_id):
-    instance = get_object_or_404(Session, id=session_id)
-    form = SessionForm(request.POST or None, instance=instance)
-    context = {'form': form, 'session_id': session_id,
-               'page_title': 'Edit Session'}
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Session Updated")
-                return redirect(reverse('edit_session', args=[session_id]))
-            except Exception as e:
-                messages.error(
-                    request, "Session Could Not Be Updated " + str(e))
-                return render(request, "hod_template/edit_session_template.html", context)
-        else:
-            messages.error(request, "Invalid Form Submitted ")
-            return render(request, "hod_template/edit_session_template.html", context)
-
-    else:
-        return render(request, "hod_template/edit_session_template.html", context)
-
-
 @csrf_exempt
 def check_email_availability(request):
     email = request.POST.get("email")
@@ -447,10 +396,8 @@ def check_email_availability(request):
 
 def admin_view_attendance(request):
     subjects = Subject.objects.all()
-    sessions = Session.objects.all()
     context = {
         'subjects': subjects,
-        'sessions': sessions,
         'page_title': 'View Attendance'
     }
 
@@ -460,13 +407,11 @@ def admin_view_attendance(request):
 @csrf_exempt
 def get_admin_attendance(request):
     subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
     attendance_date_id = request.POST.get('attendance_date_id')
     try:
         subject = get_object_or_404(Subject, id=subject_id)
-        session = get_object_or_404(Session, id=session_id)
         attendance = get_object_or_404(
-            Attendance, id=attendance_date_id, session=session)
+            Attendance, id=attendance_date_id)
         attendance_reports = AttendanceReport.objects.filter(
             attendance=attendance)
         json_data = []
@@ -614,14 +559,3 @@ def delete_subject(request, subject_id):
     subject.delete()
     messages.success(request, "Subject deleted successfully!")
     return redirect(reverse('manage_subject'))
-
-
-def delete_session(request, session_id):
-    session = get_object_or_404(Session, id=session_id)
-    try:
-        session.delete()
-        messages.success(request, "Session deleted successfully!")
-    except Exception:
-        messages.error(
-            request, "There are students assigned to this session. Please move them to another session.")
-    return redirect(reverse('manage_session'))

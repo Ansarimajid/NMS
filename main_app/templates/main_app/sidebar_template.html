@@ -123,47 +123,6 @@
                 </li>
 
 
-
-
-
-                <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link">
-                        <i  class="nav-icon fas fa-clock"></i>
-                        <p>
-                            Session
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-
-                        <li class="nav-item">
-                            {% url 'add_session' as add_session %}
-                            <a href="{{add_session}}"
-                                class="nav-link  {% if add_session == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Add Session
-
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            {% url 'manage_session' as manage_session %}
-                            {% url 'edit_session' session_id as edit_session %}
-                            <a href="{{manage_session}}"
-                                class="nav-link  {% if edit_session == request.path or manage_session == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Manage Session
-
-                                </p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
-
-
                 <li class="nav-item">
                     {% url 'add_staff' as add_staff %}
                     <a href="{{add_staff}}" class="nav-link {% if add_staff == request.path %} active {% endif %}">

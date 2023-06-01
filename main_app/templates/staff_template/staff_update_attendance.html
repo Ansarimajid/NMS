@@ -28,15 +28,6 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Session</label>
-                            <select name="session" class="form-control" id='session'>
-                                <option value="">----</option>
-                                {% for session in sessions  %}
-                                <option value="{{session.id}}">{{session}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
                         <div class="form-group"><div  style="display: none;" class="alert alert-danger" id='error_attendance'></div>
                                 <div class="alert alert-success" id='success_attendance' style="display: none;"></div>
                              <button type="button" id='fetch_attendance' class="btn btn-success btn-block">Fetch Attendance</button>
@@ -80,9 +71,8 @@
     $(document).ready(function () {
         $("#fetch_attendance").click(function(){
             var subject = $("#subject").val()
-            var session = $("#session").val()
-            if (session.length < 1 || subject.length < 1){
-                $("#error_attendance").html("Kindly Choose Both Subject and Session")
+            if ( subject.length < 1){
+                $("#error_attendance").html("Kindly Choose Both Subject")
                 $("#attendance_block").hide()
                 $("#error_attendance").show()
                 return false
@@ -92,7 +82,6 @@
                 type: 'POST',
                 data:{
                     subject:subject,
-                    session:session
                 }
             
             }

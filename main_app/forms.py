@@ -67,7 +67,7 @@ class StudentForm(CustomUserForm):
     class Meta(CustomUserForm.Meta):
         model = Student
         fields = CustomUserForm.Meta.fields + \
-            ['course', 'session']
+            ['course']
 
 
 class AdminForm(CustomUserForm):
@@ -108,19 +108,6 @@ class SubjectForm(FormSettings):
         fields = ['name', 'staff', 'course']
 
 
-class SessionForm(FormSettings):
-    def __init__(self, *args, **kwargs):
-        super(SessionForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Session
-        fields = '__all__'
-        widgets = {
-            'start_year': DateInput(attrs={'type': 'date'}),
-            'end_year': DateInput(attrs={'type': 'date'}),
-        }
-
-
 class StudentEditForm(CustomUserForm):
     def __init__(self, *args, **kwargs):
         super(StudentEditForm, self).__init__(*args, **kwargs)
@@ -140,16 +127,12 @@ class StaffEditForm(CustomUserForm):
 
 
 class EditResultForm(FormSettings):
-    session_list = Session.objects.all()
-    session_year = forms.ModelChoiceField(
-        label="Session Year", queryset=session_list, required=True)
-
     def __init__(self, *args, **kwargs):
         super(EditResultForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = StudentResult
-        fields = ['session_year', 'subject', 'student', 'test', 'exam']
+        fields = [ 'subject', 'student', 'test', 'exam']
 
 
 

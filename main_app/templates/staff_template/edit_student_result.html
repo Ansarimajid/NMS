@@ -49,9 +49,6 @@
         $("#id_subject").change(function () {
             fetchStudents();
             });
-            $("#id_session_year").change(function () {
-                fetchStudents();
-                });
    $("#id_student").change(function () {
     fetch_student_result();
                 });
@@ -62,9 +59,8 @@
                 $('label[for="id_exam"]').hide();
         function fetchStudents(){
             var subject = $("#id_subject").val()
-            var session = $("#id_session_year").val()
             $("#id_student").html(null)
-            if (session.length  == 0 || subject.length == 0 || session < 1 || subject < 1){
+            if (subject.length == 0 || subject < 1){
                 return false;
             }
             $.ajax({
@@ -72,7 +68,6 @@
                 type: 'POST',
                 data: {
                     subject: subject,
-                    session:session
                 }
             }).done(function (response) {
                 var json_data = JSON.parse(response)

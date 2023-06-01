@@ -29,16 +29,6 @@
                             </select>
                         </div>
 
-
-                        <div class="form-group">
-                            <label>Session Year</label>
-                            <select name="session" id='session' class="form-control">
-                                <option value="">----</option>
-                                {% for session in sessions  %}
-                                <option value="{{session.id}}">{{session}} </option>
-                                {% endfor %}
-                            </select>
-                        </div>
                         {% comment %}
 
                         <div>
@@ -73,10 +63,9 @@
        
         $("#fetch_student").click(function () {
             var subject = $("#subject").val()
-            var session = $("#session").val()
             $("#student_data").html(null)
-if (subject.length  == 0 || session.length == 0){
-    alert("Please select session and subject");
+if (subject.length  == 0 ){
+    alert("Please select subject");
     return false;
 }
             $.ajax({
@@ -84,7 +73,6 @@ if (subject.length  == 0 || session.length == 0){
                 type: 'POST',
                 data: {
                     subject: subject,
-                    session: session
                 }
             }).done(function (response) {
                 var json_data = JSON.parse(response)
@@ -129,7 +117,6 @@ if (subject.length  == 0 || session.length == 0){
                         date: attendance_date,
                         student_ids: student_data,
                         subject: subject,
-                        session: session
             
                     }
                 }).done(function (response) {
