@@ -4,11 +4,6 @@ from django.forms.widgets import DateInput, TextInput
 from .models import *
 from . import models
 
-class NoteForm(forms.ModelForm):
-    class Meta:
-        model = Note
-        fields = ('title', 'description', 'file')
-
 class FormSettings(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FormSettings, self).__init__(*args, **kwargs)
@@ -19,15 +14,12 @@ class FormSettings(forms.ModelForm):
 
 class CustomUserForm(FormSettings):
     email = forms.EmailField(required=True)
-    gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female')])
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    address = forms.CharField(widget=forms.Textarea)
     password = forms.CharField(widget=forms.PasswordInput)
     widget = {
         'password': forms.PasswordInput(),
     }
-    profile_pic = forms.ImageField()
 
     def __init__(self, *args, **kwargs):
         super(CustomUserForm, self).__init__(*args, **kwargs)
@@ -57,7 +49,7 @@ class CustomUserForm(FormSettings):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'gender',  'password','profile_pic', 'address' ]
+        fields = ['first_name', 'last_name', 'email', 'password']
 
 
 class StudentForm(CustomUserForm):
@@ -66,8 +58,7 @@ class StudentForm(CustomUserForm):
 
     class Meta(CustomUserForm.Meta):
         model = Student
-        fields = CustomUserForm.Meta.fields + \
-            ['course']
+        fields = CustomUserForm.Meta.fields
 
 
 class AdminForm(CustomUserForm):
@@ -85,27 +76,7 @@ class StaffForm(CustomUserForm):
 
     class Meta(CustomUserForm.Meta):
         model = Staff
-        fields = CustomUserForm.Meta.fields + \
-            ['course' ]
-
-
-class CourseForm(FormSettings):
-    def __init__(self, *args, **kwargs):
-        super(CourseForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        fields = ['name']
-        model = Course
-
-
-class SubjectForm(FormSettings):
-
-    def __init__(self, *args, **kwargs):
-        super(SubjectForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Subject
-        fields = ['name', 'staff', 'course']
+        fields = CustomUserForm.Meta.fields
 
 
 class StudentEditForm(CustomUserForm):
@@ -124,15 +95,6 @@ class StaffEditForm(CustomUserForm):
     class Meta(CustomUserForm.Meta):
         model = Staff
         fields = CustomUserForm.Meta.fields
-
-
-class EditResultForm(FormSettings):
-    def __init__(self, *args, **kwargs):
-        super(EditResultForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = StudentResult
-        fields = [ 'subject', 'student', 'test', 'exam']
 
 
 

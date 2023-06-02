@@ -265,22 +265,6 @@ var barChart = new Chart(barChartCanvas, {
                         console.log(reason)
                     })
             })
-    
-            function sendToServer(token){
-              $.ajax({
-                url: "{% url 'student_fcmtoken' %}",
-                type: 'POST',
-                data: {
-                    token: token,
-                }
-            }).done(function (response) {
-               
-      
-               
-            }).fail(function (response) {
-            })
-  
-            }
             
             InitializeFireBaseMessaging();
         </script>

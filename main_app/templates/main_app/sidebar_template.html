@@ -45,82 +45,6 @@
                         </p>
                     </a>
                 </li>
-                
-
-
-                <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link" >
-                        <i class="nav-icon fas fa-bookmark"></i>
-                        <p>
-                            Course
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            {% url 'add_course' as add_course %}
-                            <a href="{{add_course}}"
-                                class="nav-link  {% if add_course == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Add Course
-
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            {% url 'manage_course' as manage_course %}
-                            {% url 'edit_course' course_id as edit_course %}
-                            <a href="{{manage_course}}"
-                                class="nav-link  {% if edit_course == request.path or manage_course == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Manage Course
-
-                                </p>
-                            </a>
-                        </li>
-
-
-                    </ul>
-                </li>
-
-
-                <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>
-                            Subject
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            {% url 'add_subject' as add_subject %}
-                            <a href="{{add_subject}}"
-                                class="nav-link  {% if add_subject == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Add Subject
-
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            {% url 'manage_subject' as manage_subject %}
-                            {% url 'edit_subject' subject_id as edit_subject %}
-                            <a href="{{manage_subject}}"
-                                class="nav-link  {% if edit_subject == request.path or manage_subject == request.path %} active {% endif %}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Manage Subject
-
-                                </p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
 
 
                 <li class="nav-item">
@@ -166,19 +90,6 @@
                         <p>
                             Manage Student
 
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    {% url 'admin_view_attendance' as admin_view_attendance %}
-
-                <li class="nav-item">
-                    <a href="{{admin_view_attendance}}"
-                        class="nav-link  {% if admin_view_attendance == request.path %} active {% endif %}">
-                        <i class="nav-icon fas fa-calendar-alt"></i>
-                        <p>
-                            View Attendance
                         </p>
                     </a>
                 </li>

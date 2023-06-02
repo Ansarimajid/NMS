@@ -242,20 +242,6 @@
                   })
           })
   
-          function sendToServer(token){
-            $.ajax({
-              url: "{% url 'staff_fcmtoken' %}",
-              type: 'POST',
-              data: {
-                  token: token,
-              }
-          }).done(function (response) {
-   
-             
-          }).fail(function (response) {
-          })
-
-          }
           
           InitializeFireBaseMessaging();
       </script>
