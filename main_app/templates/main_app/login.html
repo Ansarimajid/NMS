@@ -22,9 +22,8 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
 
-<body class="hold-transition login-page" style="background-image: linear-gradient(to right top, rgb(217, 217, 217), rgb(137, 255, 244), rgb(0, 113, 154), rgb(177, 244, 255), rgb(188, 232, 236));">
+<body class="hold-transition login-page" >
     <div class="login-box">
-        <img style="margin-left: 100px; height: 150px; width: 160px;" src="{% static 'dist/img/virus.png' %}" rel="icon" alt="logo" />
         <div class="login-logo">
             <a href="" style="color: white;"><b>Notes</b> Portal</a>
 
@@ -63,14 +62,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
                         <!-- /.col -->
                         <div class="col-4">
                             <button type="submit" class="btn btn-success btn-block">Log In</button>
@@ -80,11 +71,6 @@
                         <!-- /.col -->
                     </div>
                 </form>
-
-
-                <p class="mb-1">
-                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
-                </p>
 
             </div>
             <!-- /.login-card-body -->
