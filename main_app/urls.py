@@ -75,5 +75,6 @@ urlpatterns = [
      path("student/fcmtoken/", student_views.student_fcmtoken,name='student_fcmtoken'),
      path('student/view_notes/', student_views.view_notes, name='view_notes'),
      path('student/view/result/', student_views.student_view_result,name='student_view_result'),
+     path('view-note-file/<int:note_id>#toolbar=0', student_views.view_note_file, name='view_note_file'),
 
 ]

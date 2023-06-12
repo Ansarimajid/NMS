@@ -3,6 +3,22 @@
 {% block page_title %}Notes{% endblock page_title %}
 {% block content %}
 
+
+<script type="text/javascript">
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', event => {
+      if (event.ctrlKey && (event.key === 'C' || event.key === 'c')) {
+        event.preventDefault();
+      }
+    });
+  </script>
+<style>
+    @media print {
+  body {
+    visibility: hidden;
+  }
+}
+</style>
 <section class="content">
     <div class="container-fluid">
         <div class="row">

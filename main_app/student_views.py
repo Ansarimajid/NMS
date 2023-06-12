@@ -9,13 +9,22 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render)
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import FileResponse
 from .forms import *
 from .models import *
 #upload
 def view_notes(request):
     notes = Note.objects.all()
     return render(request, 'student_template/view_notes.html', {'page_title': 'View Notes','notes': notes})
+
+from django.http import HttpResponse
+
+def view_note_file(request, note_id):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="note.pdf"'
+    response.status_code = 204
+    response['X-Robots-Tag'] = 'noindex, nofollow'
+    return response
 
 def student_home(request):
     student = get_object_or_404(Student, admin=request.user)
