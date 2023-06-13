@@ -133,17 +133,6 @@ def update_attendance(request):
         return None
 
     return HttpResponse("OK")
-#upload
-def upload_note(request):
-    if request.method == 'POST':
-        form = NoteForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('view_notes')
-    else:
-        form = NoteForm()
-    return render(request, 'staff_template/upload_note.html', { 'page_title': 'Upload Notes','form': form})
-
 
 def staff_view_profile(request):
     staff = get_object_or_404(Staff, admin=request.user)

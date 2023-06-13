@@ -82,6 +82,18 @@ def admin_home(request):
     return render(request, 'hod_template/home_content.html', context)
 
 
+#upload
+def upload_note(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('view_notes')
+    else:
+        form = NoteForm()
+    return render(request, 'hod_template/upload_note.html', { 'page_title': 'Upload Notes','form': form})
+
+
 def add_staff(request):
     form = StaffForm(request.POST or None, request.FILES or None)
     context = {'form': form, 'page_title': 'Add Staff'}

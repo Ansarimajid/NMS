@@ -49,6 +49,7 @@ urlpatterns = [
      path("student/edit/<int:student_id>",hod_views.edit_student, name='edit_student'),
      path("course/edit/<int:course_id>",hod_views.edit_course, name='edit_course'),
      path("subject/edit/<int:subject_id>",hod_views.edit_subject, name='edit_subject'),
+     path('staff/upload_notes/', hod_views.upload_note, name='upload_note'),
 
 
      # Staff
@@ -57,7 +58,6 @@ urlpatterns = [
      path("staff/attendance/take/", staff_views.staff_take_attendance,name='staff_take_attendance'),
      path("staff/attendance/update/", staff_views.staff_update_attendance,name='staff_update_attendance'),
      path("staff/get_students/", staff_views.get_students, name='get_students'),
-     path('staff/upload_notes/', staff_views.upload_note, name='upload_note'),
      path("staff/attendance/fetch/", staff_views.get_student_attendance,name='get_student_attendance'),
      path("staff/attendance/save/",staff_views.save_attendance, name='save_attendance'),
      path("staff/attendance/update/",staff_views.update_attendance, name='update_attendance'),
