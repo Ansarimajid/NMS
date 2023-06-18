@@ -42,8 +42,7 @@ class Session(models.Model):
 class CustomUser(AbstractUser):
     USER_TYPE = ((1, "HOD"), (2, "Staff"), (3, "Student"))
     GENDER = [("M", "Male"), ("F", "Female")]
-    
-    
+
     username = None  # Removed username, using email instead
     email = models.EmailField(unique=True)
     user_type = models.CharField(default=1, choices=USER_TYPE, max_length=1)
@@ -58,7 +57,22 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        return  self.first_name + " " + self.last_name
+        return self.first_name + " " + self.last_name
+
+    def has_paid_fees(self):
+        try:
+            fees = self.student.fees
+            return fees.payment_status
+        except Student.DoesNotExist:
+            return False
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding  # Check if it's a new instance being created
+        super().save(*args, **kwargs)
+        if is_new and self.user_type == '3':
+            Student.objects.create(admin=self)  # Create a new associated Student instance
+            Fees.objects.create(student=self)  # Create the associated Fees instance
+
 
 
 class Admin(models.Model):
@@ -75,8 +89,6 @@ class Course(models.Model):
         return self.name
 
 
-
-
 class Student(models.Model):
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING, null=True, blank=False)
@@ -84,6 +96,16 @@ class Student(models.Model):
 
     def __str__(self):
         return self.admin.last_name + ", " + self.admin.first_name
+
+
+class Fees(models.Model):
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    amount_due = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Fees for {self.student.admin.first_name} {self.student.admin.last_name}"
+
 
 
 

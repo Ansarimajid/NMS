@@ -53,6 +53,9 @@ urlpatterns = [
      path("student/edit/<int:student_id>",hod_views.edit_student, name='edit_student'),
      path("course/edit/<int:course_id>",hod_views.edit_course, name='edit_course'),
      path("subject/edit/<int:subject_id>",hod_views.edit_subject, name='edit_subject'),
+     path('payment-required/', views.payment_required, name='payment_required'),
+     path('changestatus/<int:student_id>/', hod_views.change_payment_status, name='change_payment_status'),
+
 
 
      # Staff

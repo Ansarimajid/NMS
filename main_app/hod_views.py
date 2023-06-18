@@ -211,13 +211,43 @@ def manage_staff(request):
     return render(request, "hod_template/manage_staff.html", context)
 
 
+from main_app.models import Fees
+
 def manage_student(request):
     students = CustomUser.objects.filter(user_type=3)
     context = {
         'students': students,
         'page_title': 'Manage Students'
     }
+
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        payment_status = request.POST.get('payment_status')
+
+        try:
+            student = Student.objects.get(pk=student_id)
+            fees = student.fees
+            fees.payment_status = payment_status
+            fees.save()
+            messages.success(request, 'Fee status updated successfully.')
+        except (Student.DoesNotExist, Fees.DoesNotExist):
+            messages.error(request, 'Error updating fee status.')
+
     return render(request, "hod_template/manage_student.html", context)
+
+def change_payment_status(request, student_id):
+    if request.method == 'POST':
+        payment_status = request.POST.get('payment_status')
+        try:
+            student = Student.objects.get(pk=student_id)
+            fees = student.fees
+            fees.payment_status = payment_status
+            fees.save()
+            messages.success(request, 'Fee status updated successfully.')
+        except (Student.DoesNotExist, Fees.DoesNotExist):
+            messages.error(request, 'Error updating fee status.')
+    
+    return redirect('manage_student') 
 
 
 def manage_course(request):
