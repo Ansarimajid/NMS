@@ -11,6 +11,10 @@ class FormSettings(forms.ModelForm):
         for field in self.visible_fields():
             field.field.widget.attrs['class'] = 'form-control'
 
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ('title', 'description', 'file')
 
 class CustomUserForm(FormSettings):
     email = forms.EmailField(required=True)

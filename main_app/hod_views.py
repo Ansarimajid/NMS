@@ -86,14 +86,51 @@ def manage_staff(request):
     }
     return render(request, "hod_template/manage_staff.html", context)
 
-
 def manage_student(request):
-    students = CustomUser.objects.filter(user_type=3)
+    students = Student.objects.all()
     context = {
         'students': students,
         'page_title': 'Manage Students'
     }
+
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        payment_status = request.POST.get('payment_status')
+
+        try:
+            student = Student.objects.get(pk=student_id)
+            student.payment_status = payment_status
+            student.save()
+            messages.success(request, 'Payment status updated successfully.')
+        except Student.DoesNotExist:
+            messages.error(request, 'Error updating payment status.')
+
     return render(request, "hod_template/manage_student.html", context)
+
+from django.shortcuts import redirect
+
+def change_payment_status(request, student_id):
+    if request.method == 'POST':
+        payment_status = request.POST.get('payment_status')
+        try:
+            student = Student.objects.get(pk=student_id)
+            student.payment_status = payment_status
+            student.save()
+            messages.success(request, 'Payment status updated successfully.')
+        except Student.DoesNotExist:
+            messages.error(request, 'Error updating payment status.')
+    
+    return redirect('manage_student')
+
+def upload_note(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('view_notes')
+    else:
+        form = NoteForm()
+    return render(request, 'hod_template/upload_note.html', { 'page_title': 'Upload Notes','form': form})
 
 
 def edit_staff(request, staff_id):
@@ -133,6 +170,11 @@ def edit_staff(request, staff_id):
         return render(request, "hod_template/edit_staff_template.html", context)
 
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from main_app.models import CustomUser, Student
+from main_app.forms import StudentForm
+
 def edit_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     form = StudentForm(request.POST or None, instance=student)
@@ -141,31 +183,16 @@ def edit_student(request, student_id):
         'student_id': student_id,
         'page_title': 'Edit Student'
     }
+    
     if request.method == 'POST':
         if form.is_valid():
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password') or None
-            try:
-                user = CustomUser.objects.get(id=student.admin.id)
-                user.username = username
-                user.email = email
-                if password != None:
-                    user.set_password(password)
-                user.first_name = first_name
-                user.last_name = last_name
-                user.save()
-                student.save()
-                messages.success(request, "Successfully Updated")
-                return redirect(reverse('edit_student', args=[student_id]))
-            except Exception as e:
-                messages.error(request, "Could Not Update " + str(e))
+            form.save()
+            messages.success(request, 'Successfully updated student.')
+            return redirect(reverse('edit_student', args=[student_id]))
         else:
-            messages.error(request, "Please Fill Form Properly!")
-    else:
-        return render(request, "hod_template/edit_student_template.html", context)
+            messages.error(request, 'Please fill the form properly.')
+    
+    return render(request, 'hod_template/edit_student_template.html', context)
 
 
 @csrf_exempt

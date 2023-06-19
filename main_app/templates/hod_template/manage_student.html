@@ -1,6 +1,6 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
 
 {% block content %}
 
@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
+                        <h3 class="card-title">{{ page_title }}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -20,9 +20,6 @@
                                     <th>#</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
-                                    <th>Gender</th>
-                                    <th>Course</th>
-                                    <th>Avatar</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -30,22 +27,19 @@
                                 {% for student in students %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{student.last_name}}, {{student.first_name}}</td>
-                                    <td>{{student.email}}</td>
-                                    <td>{{student.gender}}</td>
-                                    <td>{{student.student.course.name}}</td>
+                                    <td>{{ student.admin.last_name }}, {{ student.admin.first_name }}</td>
+                                    <td>{{ student.admin.email }}</td>
                                     <td>
-                                        {% if student.profile_pic == ""  %}
-                                        No Image
-                                        {% else %}
-                                        <img class="img img-fluid mb-2" height="56" width="56"
-                                            src="{{student.profile_pic}}" alt="">
-                                        {% endif %}
-                                    </td>
-                                    
-                                    <td><a href="{% url 'edit_student' student.student.id %}" class="btn btn-info">Edit</a> -
-                                        <a href="{% url 'delete_student' student.student.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a>
-
+                                        <a href="{% url 'edit_student' student.id %}" class="btn btn-info">Edit</a> -
+                                        <a href="{% url 'delete_student' student.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a>
+                                        <form method="POST" action="{% url 'change_payment_status' student.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            {% if student.admin.has_paid_fees %}
+                                                <button type="submit" class="btn btn-success" name="payment_status" value="False">Mark Unpaid</button>
+                                            {% else %}
+                                                <button type="submit" class="btn btn-primary" name="payment_status" value="True">Mark Paid</button>
+                                            {% endif %}
+                                        </form>  
                                     </td>
                                 </tr>
                                 {% endfor %}

@@ -12,7 +12,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
 from .models import *
-#upload
+
+def view_notes(request):
+    notes = Note.objects.all()
+    return render(request, 'student_template/view_notes.html', {'page_title': 'View Notes','notes': notes})
+
 def student_home(request):
     student = get_object_or_404(Student, admin=request.user)
     context = {

@@ -32,6 +32,9 @@ urlpatterns = [
      path("staff/delete/<int:staff_id>",hod_views.delete_staff, name='delete_staff'),
      path("student/delete/<int:student_id>",hod_views.delete_student, name='delete_student'),
      path("student/edit/<int:student_id>",hod_views.edit_student, name='edit_student'),
+     path('payment-required/', views.payment_required, name='payment_required'),
+     path('changestatus/<int:student_id>/', hod_views.change_payment_status, name='change_payment_status'),
+          path('admin/upload_notes/', hod_views.upload_note, name='upload_note'),
 
 
      # Staff
@@ -43,4 +46,5 @@ urlpatterns = [
      # Student
      path("student/home/", student_views.student_home, name='student_home'),
      path("student/view/profile/", student_views.student_view_profile,name='student_view_profile'),
+    path('student/view_notes/', student_views.view_notes, name='view_notes'),
 ]

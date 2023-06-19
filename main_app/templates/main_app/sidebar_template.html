@@ -3,9 +3,7 @@
     {% if request.user.user_type == '1' %}
     <!-- Brand Logo -->
     <a href="{% url 'admin_home' %}" class="brand-link">
-        <img src="{% static 'dist/img/virusx.png' %} " alt="SIGCE LOGO"
-            class="brand-image " >
-        <span class="brand-text font-weight-light" >Admin Panel</span>
+        <span class="brand-text font-weight-light" >SK Academy</span>
     </a>
 
     <!-- Sidebar -->
@@ -93,6 +91,17 @@
                         </p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    {% url 'upload_note' as upload_note %}
+                    <a href="{{upload_note}}"
+                        class="nav-link {% if upload_note == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-comment-alt"></i>
+                        <p>
+                            Upload Notes
+                        </p>
+                    </a>
+                </li>   
 
                 {% elif request.user.user_type == '2' %}
                 <!-- Brand Logo -->
@@ -190,6 +199,18 @@
                                                 <i class="nav-icon fas fa-address-card"></i>
                                                 <p>
                                                     Update Profile
+
+                                                </p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            {% url 'view_notes' as view_notes %}
+                                            <a href="{{view_notes}}"
+                                                class="nav-link {% if view_notes == request.path %} active {% endif %}">
+                                                <i class="nav-icon fas 	fas fa-atlas"></i>
+                                                <p>
+                                                    View Notes
 
                                                 </p>
                                             </a>

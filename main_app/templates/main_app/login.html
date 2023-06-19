@@ -21,17 +21,66 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
+<style>
+    /* Define your CSS styles for the header */
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        /* background-image: linear-gradient(to right top,rgb(217, 217, 217), rgb(128 209 123), rgb(0 197 7), rgb(84 207 85), rgb(188, 232, 236)); */
+        background-color: #0fc220;
+        padding: 10px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-<body class="hold-transition login-page" style="background-image: linear-gradient(to right top, rgb(217, 217, 217), rgb(137, 255, 244), rgb(0, 113, 154), rgb(177, 244, 255), rgb(188, 232, 236));">
+    .social-icons {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .social-icons li {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .social-icons li a {
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+    }
+
+    body {
+        margin-top: 60px; /* Adjust the margin-top value to leave space for the fixed header */
+    }
+</style>
+
+<body class="hold-transition login-page" style="background-image: url('{% static 'dist/img/bg.jpg' %}'); background-size: cover;">
+
+    <header>
+        <div>
+        <h1 style="margin-left: 50px;">SK Academy</h1>
+    </div>
+    <ul class="social-icons">
+        <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+        <li><a href="#"><i class="fas fa-phone"></i></a></li>
+        <li><a href="#"><i class="far fa-envelope"></i></a></li>
+        <li><a href="#"><i class="fab fa-whatsapp"></i></a></li>
+        <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+        <!-- Add more social media icons as needed -->
+    </ul>
+    
+    </header>
     <div class="login-box">
-        <img style="margin-left: 100px; height: 150px; width: 160px;" src="{% static 'dist/img/virus.png' %}" rel="icon" alt="logo" />
-        <div class="login-logo">
-            <a href="" style="color: white;"><b>Notes</b> Portal</a>
-
-        </div>
         <!-- /.login-logo -->
-        <div class="card">
-            <div class="card-body login-card-body">
+        <div class="card" style="  background-color: #ffffff81;">
+            <div class="card-body login-card-body" style="  background: #ffffff59;" >
                 <!-- <p class="login-box-msg">Sign in to start your session</p> -->
                 {% if messages %}
                 <div class="col-12">
@@ -83,7 +132,7 @@
 
 
                 <p class="mb-1">
-                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                    <a style="color: rgb(180, 3, 3);" href="{% url 'password_reset' %}">Not a Student?</a>
                 </p>
 
             </div>
