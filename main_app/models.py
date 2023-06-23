@@ -64,9 +64,15 @@ class Admin(models.Model):
 class Student(models.Model):
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     payment_status = models.BooleanField(default=False)
+    phone_no = models.CharField(max_length=20)
+    alternate_phone_no = models.CharField(max_length=20)
+    board = models.CharField(max_length=100)
+    stream = models.CharField(max_length=100)
+    grade = models.CharField(max_length=10)
 
     def __str__(self):
         return self.admin.last_name + ", " + self.admin.first_name
+
 
 
 class Staff(models.Model):

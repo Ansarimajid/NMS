@@ -3,26 +3,19 @@ import requests
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import (HttpResponse, HttpResponseRedirect,
-                              get_object_or_404, redirect, render)
+from django.shortcuts import (
+    HttpResponse, HttpResponseRedirect, get_object_or_404, redirect, render
+)
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
-
-from .forms import *
-from .models import *
-
+from main_app.models import CustomUser, Staff, Student,Admin
+from main_app.forms import StaffForm, StudentForm , AdminForm , NoteForm
 
 def admin_home(request):
     total_staff = Staff.objects.all().count()
     total_students = Student.objects.all().count()
-    
-
-
-    # For Students
-
-    students = Student.objects.all()
 
     context = {
         'page_title': "Administrative Dashboard",
@@ -41,17 +34,22 @@ def add_staff(request):
             last_name = form.cleaned_data.get('last_name')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
+            phone_no = form.cleaned_data.get('phone_no')
+            alternate_phone_no = form.cleaned_data.get('alternate_phone_no')
+            board = form.cleaned_data.get('board')
+            stream = form.cleaned_data.get('stream')
+            grade = form.cleaned_data.get('grade')
             try:
                 user = CustomUser.objects.create_user(
                     email=email, password=password, user_type=2, first_name=first_name, last_name=last_name)
-                user.save()
+                staff = Staff.objects.create(
+                    user=user, phone_no=phone_no, alternate_phone_no=alternate_phone_no, board=board, stream=stream, grade=grade)
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('add_staff'))
-
             except Exception as e:
                 messages.error(request, "Could Not Add " + str(e))
         else:
-            messages.error(request, "Please fulfil all requirements")
+            messages.error(request, "Please fulfill all requirements")
 
     return render(request, 'hod_template/add_staff_template.html', context)
 
@@ -65,10 +63,27 @@ def add_student(request):
             last_name = student_form.cleaned_data.get('last_name')
             email = student_form.cleaned_data.get('email')
             password = student_form.cleaned_data.get('password')
+            phone_no = student_form.cleaned_data.get('phone_no')
+            alternate_phone_no = student_form.cleaned_data.get('alternate_phone_no')
+            board = student_form.cleaned_data.get('board')
+            stream = student_form.cleaned_data.get('stream')
+            grade = student_form.cleaned_data.get('grade')
             try:
                 user = CustomUser.objects.create_user(
                     email=email, password=password, user_type=3, first_name=first_name, last_name=last_name)
-                user.save()
+                student, created = Student.objects.get_or_create(
+                    admin_id=user.id,
+                    defaults={'phone_no': phone_no, 'alternate_phone_no': alternate_phone_no, 'board': board, 'stream': stream, 'grade': grade}
+                )
+                if not created:
+                    # Update the existing student record
+                    student.phone_no = phone_no
+                    student.alternate_phone_no = alternate_phone_no
+                    student.board = board
+                    student.stream = stream
+                    student.grade = grade
+                    student.save()
+
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('add_student'))
             except Exception as e:
@@ -78,13 +93,16 @@ def add_student(request):
     return render(request, 'hod_template/add_student_template.html', context)
 
 
+
+
 def manage_staff(request):
-    allStaff = CustomUser.objects.filter(user_type=2)
+    allStaff = Staff.objects.all()
     context = {
         'allStaff': allStaff,
         'page_title': 'Manage Staff'
     }
     return render(request, "hod_template/manage_staff.html", context)
+
 
 def manage_student(request):
     students = Student.objects.all()
@@ -107,7 +125,6 @@ def manage_student(request):
 
     return render(request, "hod_template/manage_student.html", context)
 
-from django.shortcuts import redirect
 
 def change_payment_status(request, student_id):
     if request.method == 'POST':
@@ -119,8 +136,9 @@ def change_payment_status(request, student_id):
             messages.success(request, 'Payment status updated successfully.')
         except Student.DoesNotExist:
             messages.error(request, 'Error updating payment status.')
-    
+
     return redirect('manage_student')
+
 
 def upload_note(request):
     if request.method == 'POST':
@@ -130,7 +148,7 @@ def upload_note(request):
             return redirect('view_notes')
     else:
         form = NoteForm()
-    return render(request, 'hod_template/upload_note.html', { 'page_title': 'Upload Notes','form': form})
+    return render(request, 'hod_template/upload_note.html', {'page_title': 'Upload Notes', 'form': form})
 
 
 def edit_staff(request, staff_id):
@@ -143,37 +161,16 @@ def edit_staff(request, staff_id):
     }
     if request.method == 'POST':
         if form.is_valid():
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password') or None
-            try:
-                user = CustomUser.objects.get(id=staff.admin.id)
-                user.username = username
-                user.email = email
-                if password != None:
-                    user.set_password(password)
-                user.first_name = first_name
-                user.last_name = last_name
-                user.save()
-                staff.save()
-                messages.success(request, "Successfully Updated")
-                return redirect(reverse('edit_staff', args=[staff_id]))
-            except Exception as e:
-                messages.error(request, "Could Not Update " + str(e))
+            form.save()
+            messages.success(request, "Successfully Updated")
+            return redirect(reverse('edit_staff', args=[staff_id]))
         else:
-            messages.error(request, "Please fil form properly")
+            messages.error(request, "Please fill the form properly")
     else:
         user = CustomUser.objects.get(id=staff_id)
         staff = Staff.objects.get(id=user.id)
         return render(request, "hod_template/edit_staff_template.html", context)
 
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-from main_app.models import CustomUser, Student
-from main_app.forms import StudentForm
 
 def edit_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
@@ -183,7 +180,7 @@ def edit_student(request, student_id):
         'student_id': student_id,
         'page_title': 'Edit Student'
     }
-    
+
     if request.method == 'POST':
         if form.is_valid():
             form.save()
@@ -191,7 +188,7 @@ def edit_student(request, student_id):
             return redirect(reverse('edit_student', args=[student_id]))
         else:
             messages.error(request, 'Please fill the form properly.')
-    
+
     return render(request, 'hod_template/edit_student_template.html', context)
 
 
@@ -206,35 +203,59 @@ def check_email_availability(request):
     except Exception as e:
         return HttpResponse(False)
 
+
 def admin_view_profile(request):
     admin = get_object_or_404(Admin, admin=request.user)
-    form = AdminForm(request.POST or None, request.FILES or None,
-                     instance=admin)
-    context = {'form': form,
-               'page_title': 'View/Edit Profile'
-               }
+    form = AdminForm(request.POST or None, request.FILES or None, instance=admin)
+    context = {
+        'form': form,
+        'page_title': 'Admin Profile'
+    }
     if request.method == 'POST':
-        try:
-            if form.is_valid():
-                first_name = form.cleaned_data.get('first_name')
-                last_name = form.cleaned_data.get('last_name')
-                password = form.cleaned_data.get('password') or None
-                custom_user = admin.admin
-                if password != None:
-                    custom_user.set_password(password)
-                custom_user.first_name = first_name
-                custom_user.last_name = last_name
-                custom_user.save()
-                messages.success(request, "Profile Updated!")
-                return redirect(reverse('admin_view_profile'))
-            else:
-                messages.error(request, "Invalid Data Provided")
-        except Exception as e:
-            messages.error(
-                request, "Error Occured While Updating Profile " + str(e))
-    return render(request, "hod_template/admin_view_profile.html", context)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully Updated")
+            return redirect(reverse('admin_view_profile'))
+        else:
+            messages.error(request, "Please fill the form properly")
+    else:
+        return render(request, 'hod_template/admin_template.html', context)
 
 
+def staff_view_profile(request):
+    staff = get_object_or_404(Staff, user=request.user)
+    form = StaffForm(request.POST or None, request.FILES or None, instance=staff)
+    context = {
+        'form': form,
+        'page_title': 'Staff Profile'
+    }
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully Updated")
+            return redirect(reverse('staff_view_profile'))
+        else:
+            messages.error(request, "Please fill the form properly")
+    else:
+        return render(request, 'staff_template/staff_template.html', context)
+
+
+def student_view_profile(request):
+    student = get_object_or_404(Student, user=request.user)
+    form = StudentForm(request.POST or None, request.FILES or None, instance=student)
+    context = {
+        'form': form,
+        'page_title': 'Student Profile'
+    }
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully Updated")
+            return redirect(reverse('student_view_profile'))
+        else:
+            messages.error(request, "Please fill the form properly")
+    else:
+        return render(request, 'student_template/student_template.html', context)
 def delete_staff(request, staff_id):
     staff = get_object_or_404(CustomUser, staff__id=staff_id)
     staff.delete()
