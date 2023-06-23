@@ -57,12 +57,15 @@ class CustomUserForm(FormSettings):
 
 
 class StudentForm(CustomUserForm):
+    board = forms.ChoiceField(choices=Student.BOARD_CHOICES)
+    stream = forms.ChoiceField(choices=Student.STREAM_CHOICES)
+
     def __init__(self, *args, **kwargs):
         super(StudentForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
         model = Student
-        fields = CustomUserForm.Meta.fields
+        fields = CustomUserForm.Meta.fields + ['phone_no','alternate_phone_no','board', 'stream','grade']
 
 
 class AdminForm(CustomUserForm):
@@ -89,7 +92,7 @@ class StudentEditForm(CustomUserForm):
 
     class Meta(CustomUserForm.Meta):
         model = Student
-        fields = CustomUserForm.Meta.fields 
+        fields = CustomUserForm.Meta.fields + ['phone_no','alternate_phone_no','board', 'stream','grade']
 
 
 class StaffEditForm(CustomUserForm):

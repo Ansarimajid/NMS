@@ -55,7 +55,6 @@ def add_staff(request):
 
     return render(request, 'hod_template/add_staff_template.html', context)
 
-
 def add_student(request):
     student_form = StudentForm(request.POST or None)
     context = {'form': student_form, 'page_title': 'Add Student'}
@@ -65,10 +64,27 @@ def add_student(request):
             last_name = student_form.cleaned_data.get('last_name')
             email = student_form.cleaned_data.get('email')
             password = student_form.cleaned_data.get('password')
+            phone_no = student_form.cleaned_data.get('phone_no')
+            alternate_phone_no = student_form.cleaned_data.get('alternate_phone_no')
+            board = student_form.cleaned_data.get('board')
+            stream = student_form.cleaned_data.get('stream')
+            grade = student_form.cleaned_data.get('grade')
             try:
                 user = CustomUser.objects.create_user(
                     email=email, password=password, user_type=3, first_name=first_name, last_name=last_name)
-                user.save()
+                student, created = Student.objects.get_or_create(
+                    admin_id=user.id,
+                    defaults={'phone_no': phone_no, 'alternate_phone_no': alternate_phone_no, 'board': board, 'stream': stream, 'grade': grade}
+                )
+                if not created:
+                    # Update the existing student record
+                    student.phone_no = phone_no
+                    student.alternate_phone_no = alternate_phone_no
+                    student.board = board
+                    student.stream = stream
+                    student.grade = grade
+                    student.save()
+
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('add_student'))
             except Exception as e:
@@ -170,11 +186,6 @@ def edit_staff(request, staff_id):
         return render(request, "hod_template/edit_staff_template.html", context)
 
 
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-from main_app.models import CustomUser, Student
-from main_app.forms import StudentForm
-
 def edit_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     form = StudentForm(request.POST or None, instance=student)
@@ -183,17 +194,41 @@ def edit_student(request, student_id):
         'student_id': student_id,
         'page_title': 'Edit Student'
     }
-    
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Successfully updated student.')
-            return redirect(reverse('edit_student', args=[student_id]))
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password') or None
+            phone_no = form.cleaned_data.get('phone_no')
+            alternate_phone_no = form.cleaned_data.get('alternate_phone_no')
+            board = form.cleaned_data.get('board')
+            stream = form.cleaned_data.get('stream')
+            grade = form.cleaned_data.get('grade')
+            try:
+                user = CustomUser.objects.get(id=student.admin.id)
+                user.username = username
+                user.email = email
+                if password != None:
+                    user.set_password(password)
+                user.first_name = first_name
+                user.last_name = last_name
+                student.phone_no = phone_no
+                student.alternate_phone_no = alternate_phone_no
+                student.board = board
+                student.stream = stream
+                student.grade = grade
+                user.save()
+                student.save()
+                messages.success(request, "Successfully Updated")
+                return redirect(reverse('edit_student', args=[student_id]))
+            except Exception as e:
+                messages.error(request, "Could Not Update " + str(e))
         else:
-            messages.error(request, 'Please fill the form properly.')
-    
-    return render(request, 'hod_template/edit_student_template.html', context)
-
+            messages.error(request, "Please Fill Form Properly!")
+    else:
+        return render(request, "hod_template/edit_student_template.html", context)
 
 @csrf_exempt
 def check_email_availability(request):

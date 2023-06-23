@@ -62,8 +62,27 @@ class Admin(models.Model):
 
 
 class Student(models.Model):
+    BOARD_CHOICES = (
+        ('CBSE', 'CBSE'),
+        ('ICSE', 'ICSE'),
+        ('State Board', 'State Board'),
+        # Add more choices as needed
+    )
+
+    STREAM_CHOICES = (
+        ('Science', 'Science'),
+        ('Commerce', 'Commerce'),
+        ('Arts', 'Arts'),
+        # Add more choices as needed
+    )
+
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     payment_status = models.BooleanField(default=False)
+    phone_no = models.CharField(max_length=20)
+    alternate_phone_no = models.CharField(max_length=20)
+    board = models.CharField(max_length=100, choices=BOARD_CHOICES)
+    stream = models.CharField(max_length=100, choices=STREAM_CHOICES)
+    grade = models.CharField(max_length=10)
 
     def __str__(self):
         return self.admin.last_name + ", " + self.admin.first_name
