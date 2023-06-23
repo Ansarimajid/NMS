@@ -41,19 +41,40 @@ def add_staff(request):
             last_name = form.cleaned_data.get('last_name')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
+            phone_no = form.cleaned_data.get('phone_no')
+            alternate_phone_no = form.cleaned_data.get('alternate_phone_no')
+            designation = form.cleaned_data.get('designation')
+            monthly_salary = form.cleaned_data.get('monthly_salary')
+            yearly_salary = form.cleaned_data.get('yearly_salary')
+            
             try:
                 user = CustomUser.objects.create_user(
                     email=email, password=password, user_type=2, first_name=first_name, last_name=last_name)
-                user.save()
+                
+                staff, created = Staff.objects.get_or_create(
+                    admin_id=user.id,
+                    defaults={'phone_no': phone_no, 'alternate_phone_no': alternate_phone_no, 'designation': designation, 'monthly_salary': monthly_salary, 'yearly_salary': yearly_salary}
+                )
+                
+                if not created:
+                    staff.phone_no = phone_no
+                    staff.alternate_phone_no = alternate_phone_no
+                    staff.designation = designation
+                    staff.monthly_salary = monthly_salary
+                    staff.yearly_salary = yearly_salary
+                    staff.save()
+                
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('add_staff'))
-
+            
             except Exception as e:
-                messages.error(request, "Could Not Add " + str(e))
+                messages.error(request, "Could Not Add: " + str(e))
+        
         else:
-            messages.error(request, "Please fulfil all requirements")
+            messages.error(request, "Please fulfill all requirements")
 
     return render(request, 'hod_template/add_staff_template.html', context)
+
 
 def add_student(request):
     student_form = StudentForm(request.POST or None)

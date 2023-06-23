@@ -83,7 +83,7 @@ class StaffForm(CustomUserForm):
 
     class Meta(CustomUserForm.Meta):
         model = Staff
-        fields = CustomUserForm.Meta.fields
+        fields = CustomUserForm.Meta.fields + ['phone_no','alternate_phone_no','designation', 'monthly_salary','yearly_salary']
 
 
 class StudentEditForm(CustomUserForm):
@@ -101,7 +101,7 @@ class StaffEditForm(CustomUserForm):
 
     class Meta(CustomUserForm.Meta):
         model = Staff
-        fields = CustomUserForm.Meta.fields
+        fields = CustomUserForm.Meta.fields + ['phone_no','alternate_phone_no','designation', 'monthly_salary','yearly_salary']
 
 
 

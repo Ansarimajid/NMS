@@ -90,6 +90,11 @@ class Student(models.Model):
 
 class Staff(models.Model):
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    phone_no = models.CharField(max_length=20)
+    alternate_phone_no = models.CharField(max_length=20)
+    designation = models.CharField(max_length=100)
+    monthly_salary = models.IntegerField()
+    yearly_salary = models.IntegerField()
 
     def __str__(self):
         return self.admin.first_name + " " + self.admin.last_name
