@@ -7,7 +7,7 @@
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar" style="background-image: linear-gradient(to right top, #0b3574, #033f91, #004aae, #0054cc, #125eeb);">
+    <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
@@ -216,17 +216,6 @@
                                             </a>
                                         </li>
                                         {% endif %}
-
-                                        <li class="nav-item">
-                                            <a href="{% url 'user_logout' %}"
-                                                onclick="return confirm('Your session would be terminated.\n\nProceed?')"
-                                                class="nav-link">
-                                                <i  style="color: #ff0000"  class="nav-icon fas fa-power-off"></i>
-                                                <p>
-                                                    Logout
-                                                </p>
-                                            </a>
-                                        </li>
                                     </ul>
                                 </nav>
                                 <!-- /.sidebar-menu -->
