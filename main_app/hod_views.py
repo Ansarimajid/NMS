@@ -44,8 +44,8 @@ def add_staff(request):
             phone_no = form.cleaned_data.get('phone_no')
             alternate_phone_no = form.cleaned_data.get('alternate_phone_no')
             designation = form.cleaned_data.get('designation')
-            monthly_salary = form.cleaned_data.get('monthly_salary')
-            yearly_salary = form.cleaned_data.get('yearly_salary')
+            mon_sal = form.cleaned_data.get('mon_sal')
+            year_sal = form.cleaned_data.get('year_sal')
             
             try:
                 user = CustomUser.objects.create_user(
@@ -53,26 +53,26 @@ def add_staff(request):
                 
                 staff, created = Staff.objects.get_or_create(
                     admin_id=user.id,
-                    defaults={'phone_no': phone_no, 'alternate_phone_no': alternate_phone_no, 'designation': designation, 'monthly_salary': monthly_salary, 'yearly_salary': yearly_salary}
+                    defaults={'phone_no': phone_no, 'alternate_phone_no': alternate_phone_no, 'designation': designation, 'mon_sal': mon_sal, 'year_sal': year_sal}
                 )
                 
                 if not created:
                     staff.phone_no = phone_no
                     staff.alternate_phone_no = alternate_phone_no
                     staff.designation = designation
-                    staff.monthly_salary = monthly_salary
-                    staff.yearly_salary = yearly_salary
+                    staff.mon_sal = mon_sal
+                    staff.year_sal = year_sal
                     staff.save()
                 
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('add_staff'))
-            
+        
             except Exception as e:
                 messages.error(request, "Could Not Add: " + str(e))
         
         else:
             messages.error(request, "Please fulfill all requirements")
-
+    print(request.POST)
     return render(request, 'hod_template/add_staff_template.html', context)
 
 
@@ -185,6 +185,11 @@ def edit_staff(request, staff_id):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password') or None
+            phone_no = form.cleaned_data.get('phone_no')
+            alternate_phone_no = form.cleaned_data.get('alternate_phone_no')
+            designation = form.cleaned_data.get('designation')
+            mon_sal = form.cleaned_data.get('mon_sal')
+            year_sal = form.cleaned_data.get('year_sal')
             try:
                 user = CustomUser.objects.get(id=staff.admin.id)
                 user.username = username
@@ -193,6 +198,11 @@ def edit_staff(request, staff_id):
                     user.set_password(password)
                 user.first_name = first_name
                 user.last_name = last_name
+                staff.phone_no = phone_no
+                staff.alternate_phone_no = alternate_phone_no
+                staff.designation = designation
+                staff.mon_sal = mon_sal
+                staff.year_sal = year_sal
                 user.save()
                 staff.save()
                 messages.success(request, "Successfully Updated")
@@ -202,8 +212,6 @@ def edit_staff(request, staff_id):
         else:
             messages.error(request, "Please fil form properly")
     else:
-        user = CustomUser.objects.get(id=staff_id)
-        staff = Staff.objects.get(id=user.id)
         return render(request, "hod_template/edit_staff_template.html", context)
 
 
